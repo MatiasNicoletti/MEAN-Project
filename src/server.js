@@ -5,7 +5,7 @@ const http = require("http");
 const normalizePort = val => {
   var port = parseInt(val, 10);
 
-  if (isNaN(port)) {
+  if (isNaN(port)) { 
     // named pipe
     return val;
   }
