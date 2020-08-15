@@ -14,6 +14,7 @@ export class PostCreateComponent implements OnInit{
     private mode = 'create';
     private postId:string;
     post:Post;
+    isLoading: boolean=false;
     // @Output() postCreated = new EventEmitter<Post>();
     // Output so the event is able to be listened on others compoentents
     constructor(private postsService: PostsService, private route: ActivatedRoute) { }
@@ -23,7 +24,9 @@ export class PostCreateComponent implements OnInit{
             if(paramMap.has('id')){
                 this.mode = 'edit';
                 this.postId = paramMap.get('id');
+                this.isLoading = true;
                 this.postsService.getPost(this.postId).subscribe(postData =>{
+                    this.isLoading = false;
                     this.post = {...postData};
                 });
             }else{
@@ -37,6 +40,7 @@ export class PostCreateComponent implements OnInit{
         if (form.invalid) {
             return
         }
+        this.isLoading = true;
         if(this.mode === 'create'){
             this.postsService.addPost(form.value.titleInput, form.value.contentInput);
         }else{
