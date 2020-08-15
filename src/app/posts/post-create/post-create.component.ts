@@ -13,7 +13,7 @@ export class PostCreateComponent implements OnInit{
     enteredTitle = '';
     private mode = 'create';
     private postId:string;
-    private post:Post;
+    post:Post = {title:'', content:''};
     // @Output() postCreated = new EventEmitter<Post>();
     // Output so the event is able to be listened on others compoentents
     constructor(private postsService: PostsService, private route: ActivatedRoute) { }
@@ -35,8 +35,12 @@ export class PostCreateComponent implements OnInit{
         if (form.invalid) {
             return
         }
+        if(this.mode === 'create'){
+            this.postsService.addPost(form.value.titleInput, form.value.contentInput);
+        }else{
+            this.postsService.updatePost(this.postId,form.value.titleInput, form.value.contentInput);
+        }
         //    this.postCreated.emit(post);
-        this.postsService.addPost(form.value.titleInput, form.value.contentInput);
         form.resetForm();
     }
 }

@@ -23,7 +23,7 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers',
         'Origin, X-Requested-With, Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH,PUT, DELETE, OPTIONS');
     next();
 });
 
@@ -38,8 +38,12 @@ app.post('/api/posts', (req, res, next) => {
             postId: result._id
         });
     });
-
 });
+
+app.put('/api/posts/:id',async (req,res,next) => {
+    post = await Post.updateOne({_id: req.body.id, title: req.body.title, content: req.body.content});
+    res.status(200).json({status:'success'});
+})
 
 app.get('/api/posts', async (req, res, next) => {
     const posts = await Post.find();
