@@ -23,9 +23,11 @@ router.route('/')
         });
     });
 
-router.route('/:id').get((req, res, next) => {
+router.route('/:id')
+.get((req, res, next) => {
     Post.findById(req.params.id).then(post => {
         if (post) {
+            console.log(post);
             res.status(200).json(post);
         } else {
             res.status(404).json({ message: 'Post not found' });
