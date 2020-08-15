@@ -3,6 +3,7 @@ import { Post } from '../post.model';
 import { NgForm, FormGroup, FormControl, Validators } from '@angular/forms';
 import { PostsService } from '../posts.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { read } from 'fs';
 @Component({
     selector: 'app-post-create',
     templateUrl: './post-create.component.html',
@@ -16,6 +17,7 @@ export class PostCreateComponent implements OnInit {
     post: Post;
     isLoading: boolean = false;
     form: FormGroup;
+    imagePreview: string;
     // @Output() postCreated = new EventEmitter<Post>();
     // Output so the event is able to be listened on others compoentents
     constructor(private postsService: PostsService, private route: ActivatedRoute) { }
@@ -57,6 +59,11 @@ export class PostCreateComponent implements OnInit {
         const file = (event.target as HTMLInputElement).files[0];
         this.form.patchValue({image:file});
         this.form.get('image').updateValueAndValidity();
+        const reader = new FileReader();
+        reader.onload = () => {
+            this.imagePreview = reader.result as string;
+        }
+        reader.readAsDataURL(file);
     }
 
     onAddPost() {
