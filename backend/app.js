@@ -25,7 +25,7 @@ app.use((req,res,next)=>{
                 'Origin, X-Requested-With, Content-Type, Accept');
                 res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
     next();
-});
+}); 
 
 app.post('/api/posts', (req,res,next) => {
     const post = new Post({
@@ -44,6 +44,11 @@ app.get('/api/posts', async (req, res, next) => {
         status: 'success',
         posts
     });
+});
+
+app.delete('/api/posts/:id', async (req,res,next)=>{
+    await Post.deleteOne({_id:req.params.id});
+    res.status(200).json({message:'deleted'});
 });
 
 module.exports = app;
