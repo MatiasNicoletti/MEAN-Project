@@ -1,6 +1,20 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const Post = require('./models/post');
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb+srv://admin:userAdmin@cluster0.1szjd.mongodb.net/Posts?retryWrites=true&w=majority')
+    .then(() => {
+        console.log('------------------------------------');
+        console.log('Connected to DB');
+        console.log('------------------------------------');
+    })
+    .catch(() => {
+        console.log('------------------------------------');
+        console.log('Error in the connection to the DB');
+        console.log('------------------------------------');
+    })
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));
@@ -14,18 +28,18 @@ app.use((req,res,next)=>{
 });
 
 app.post('/api/posts', (req,res,next) => {
-    const post = req.body;
-    console.log(post);
+    const post = new Post({
+        title: req.body.title,
+        content: req.body.content
+    });
+    post.save();
     res.status(201).json({
         status:'success'
     })
 });
 
-app.get('/api/posts', (req, res, next) => {
-    const posts = [
-        { id: 'fagh34ghdfs', title: 'server post', content: 'this is a content' },
-        { id: 'fy6654gh', title: 'second server post', content: 'this is a content' },
-    ];
+app.get('/api/posts', async (req, res, next) => {
+    const posts = await Post.find();
     return res.status(200).json({
         status: 'success',
         posts
