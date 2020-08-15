@@ -13,7 +13,7 @@ export class PostCreateComponent implements OnInit{
     enteredTitle = '';
     private mode = 'create';
     private postId:string;
-    post:Post = {title:'', content:''};
+    post:Post;
     // @Output() postCreated = new EventEmitter<Post>();
     // Output so the event is able to be listened on others compoentents
     constructor(private postsService: PostsService, private route: ActivatedRoute) { }
@@ -23,7 +23,9 @@ export class PostCreateComponent implements OnInit{
             if(paramMap.has('id')){
                 this.mode = 'edit';
                 this.postId = paramMap.get('id');
-                this.post = this.postsService.getPost(this.postId);
+                this.postsService.getPost(this.postId).subscribe(postData =>{
+                    this.post = {...postData};
+                });
             }else{
                 this.mode = 'create';
                 this.postId = null;
