@@ -3,7 +3,7 @@ import { Post } from '../post.model';
 import { NgForm, FormGroup, FormControl, Validators } from '@angular/forms';
 import { PostsService } from '../posts.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { read } from 'fs';
+import { mimeType } from './mime-type.validator';
 @Component({
     selector: 'app-post-create',
     templateUrl: './post-create.component.html',
@@ -31,14 +31,14 @@ export class PostCreateComponent implements OnInit {
             'content': new FormControl(null, {
                 validators: [Validators.required]
             }),
-            'image':new FormControl(null, { validators: [Validators.required]})
+            'image':new FormControl(null, { validators: [Validators.required], 
+            asyncValidators: [mimeType]})
         });
 
         this.route.paramMap.subscribe((paramMap: ParamMap) => {
             if (paramMap.has('id')) {
                 this.mode = 'edit';
                 this.postId = paramMap.get('id');
-                
                 this.isLoading = true;
                 this.postsService.getPost(this.postId).subscribe(postData => {
                     this.isLoading = false;
@@ -46,6 +46,7 @@ export class PostCreateComponent implements OnInit {
 
                 });
                 
+            
                 this.form.setValue({ title: this.post.title, content: this.post.content });
             } else {
                 this.mode = 'create';
@@ -76,6 +77,7 @@ export class PostCreateComponent implements OnInit {
         } else {
             this.postsService.updatePost(this.postId, this.form.value.title, this.form.value.content);
         }
+        this.isLoading = false;
         //    this.postCreated.emit(post);
         this.form.reset();
     }

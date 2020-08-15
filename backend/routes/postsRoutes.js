@@ -3,12 +3,12 @@ const Post = require('../models/post');
 const router = express.Router();
 
 router.route('/')
-    .post((req, res, next) => {
+    .post(async(req, res, next) => {
         const post = new Post({
             title: req.body.title,
             content: req.body.content
         });
-        post.save().then(result => {
+        await post.save().then(result => {
             res.status(201).json({
                 status: 'success',
                 postId: result._id
@@ -24,8 +24,8 @@ router.route('/')
     });
 
 router.route('/:id')
-.get((req, res, next) => {
-    Post.findById(req.params.id).then(post => {
+.get( async(req, res, next) => {
+    await Post.findById(req.params.id).then(post => {
         if (post) {
             console.log(post);
             res.status(200).json(post);
@@ -37,6 +37,9 @@ router.route('/:id')
     await Post.deleteOne({ _id: req.params.id });
     res.status(200).json({ message: 'deleted' });
 }).put(async (req, res, next) => {
-    post = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true })});
+    
+    post = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.status(200).json({ message: 'success', post });
+});
 
     module.exports = router;
