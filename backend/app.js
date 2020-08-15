@@ -17,25 +17,28 @@ mongoose.connect('mongodb+srv://admin:userAdmin@cluster0.1szjd.mongodb.net/Posts
     })
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use((req,res,next)=>{
+app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 
-                'Origin, X-Requested-With, Content-Type, Accept');
-                res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
     next();
-}); 
+});
 
-app.post('/api/posts', (req,res,next) => {
+app.post('/api/posts', (req, res, next) => {
     const post = new Post({
         title: req.body.title,
         content: req.body.content
     });
-    post.save();
-    res.status(201).json({
-        status:'success'
-    })
+    post.save().then(result => {
+        res.status(201).json({
+            status: 'success',
+            postId: result._id
+        });
+    });
+
 });
 
 app.get('/api/posts', async (req, res, next) => {
@@ -46,9 +49,9 @@ app.get('/api/posts', async (req, res, next) => {
     });
 });
 
-app.delete('/api/posts/:id', async (req,res,next)=>{
-    await Post.deleteOne({_id:req.params.id});
-    res.status(200).json({message:'deleted'});
+app.delete('/api/posts/:id', async (req, res, next) => {
+    await Post.deleteOne({ _id: req.params.id });
+    res.status(200).json({ message: 'deleted' });
 });
 
 module.exports = app;
