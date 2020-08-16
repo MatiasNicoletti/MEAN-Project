@@ -43,15 +43,18 @@ router.route('/')
         const pageSize = +req.query.pagesize;
         const currentPage = +req.query.page;
         const postQuery = Post.find();
+        let fetchedPosts;
+        let count;
         if(pageSize && currentPage){
             postQuery.skip(pageSize * (currentPage -1))
             .limit(pageSize);
         }
-
-        const posts = await postQuery;
+        count = Post.count();
+        fetchedPosts = await postQuery;
         return res.status(200).json({
             status: 'success',
-            posts
+            posts,
+            count
         });
     });
 
