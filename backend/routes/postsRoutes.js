@@ -40,7 +40,15 @@ router.route('/')
         });
     })
     .get(async (req, res, next) => {
-        const posts = await Post.find();
+        const pageSize = +req.query.pagesize;
+        const currentPage = +req.query.page;
+        const postQuery = Post.find();
+        if(pageSize && currentPage){
+            postQuery.skip(pageSize * (currentPage -1))
+            .limit(pageSize);
+        }
+
+        const posts = await postQuery;
         return res.status(200).json({
             status: 'success',
             posts
