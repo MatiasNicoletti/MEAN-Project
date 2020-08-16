@@ -19,8 +19,10 @@ export class PostsService {
     this.http
       .get<{ message: string, posts: any, maxPosts: number }>('http://localhost:3000/api/posts' + queryParams)
       .pipe(map(postData => {
+        console.log(postData);
         return {
-          posts: postData.posts.map(post => {
+          
+          posts: postData.fetchedPosts.map(post => {
             return {
               ...post,
               id: post._id
@@ -49,10 +51,6 @@ export class PostsService {
     postData.append('image', image, title);
     this.http.post<{ message: string, post: Post }>('http://localhost:3000/api/posts', postData)
       .subscribe((response) => {
-        const post: Post = { ...response.post };
-        post.id = response.post.id;
-        this.posts.push(post);
-        this.postUpdated.next([...this.posts]);
         this.router.navigate(['/']);
       });
   }
@@ -70,24 +68,12 @@ export class PostsService {
 
     this.http.put('http://localhost:3000/api/posts/' + id, postData)
       .subscribe(response => {
-        const updatedPosts = [...this.posts];
-        const oldPostIndex = updatedPosts.findIndex(p => p.id === id);
-        const post: Post = { id, title, content, imagePath: "" };
-        updatedPosts[oldPostIndex] = post;
-        this.posts = updatedPosts;
-        this.postUpdated.next([...this.posts]);
-
         this.router.navigate(['/']);
       });
   }
 
   deletePost(postId: string) {
-    this.http.delete('http://localhost:3000/api/posts/' + postId)
-      .subscribe(() => {
-        const updatedPost = this.posts.filter(post => post.id !== postId);
-        this.posts = updatedPost;
-        console.log(this.posts);
-        this.postUpdated.next([...this.posts]);
-      });
+    return this.http.delete('http://localhost:3000/api/posts/' + postId);
+      
   }
 }

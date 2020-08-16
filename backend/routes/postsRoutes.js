@@ -49,11 +49,11 @@ router.route('/')
             postQuery.skip(pageSize * (currentPage -1))
             .limit(pageSize);
         }
-        count = Post.count();
+        count = await Post.count();
         fetchedPosts = await postQuery;
         return res.status(200).json({
             status: 'success',
-            posts,
+            fetchedPosts,
             count
         });
     });
