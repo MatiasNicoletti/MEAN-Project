@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"name": "React",
+			"path": "..\\..\\..\\..\\..\\..\\React"
+		},
+		{
+			"path": "..\\..\\..\\..\\..\\..\\Python"
+		},
+		{
+			"path": "..\\..\\..\\..\\.."
+		},
+		{
+			"path": "..\\..\\..\\..\\..\\..\\UTN\\Avanzada II"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "Avanzada II"
+	}
+}
