@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 export class AuthService{
     private isAuthenticated:boolean = false;
     private token:string;
+    private tokenTimer: any;
     private authStatusListener = new Subject<boolean>();
     constructor(private http: HttpClient, private router: Router){}
 
@@ -23,10 +24,14 @@ export class AuthService{
 
     login(email: string, password:string){
         const authData: AuthData = {email, password};
-        this.http.post<{token:string}>('http://localhost:3000/api/users/login', authData)
+        this.http.post<{token:string, expiresIn:number}>('http://localhost:3000/api/users/login', authData)
             .subscribe(response => {
                 this.token = response.token;
                 if(this.token){
+                    const expiresIn = response.expiresIn;
+                    this.tokenTimer = setTimeout(()=>{
+                        this.logout();
+                    }, expiresIn * 1000);
                     this.isAuthenticated = true;
                     this.authStatusListener.next(true);
                     this.router.navigate(['/']);
@@ -39,6 +44,7 @@ export class AuthService{
         this.isAuthenticated =false;
         this.authStatusListener.next(false);
         this.router.navigate(['/']);
+        clearTimeout(this.tokenTimer);
     }
 
     getAuthStatusListener(){
