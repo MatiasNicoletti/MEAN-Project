@@ -27,12 +27,13 @@ const storage = multer.diskStorage({
 });
 
 router.route('/')
-    .post(checkAuth,multer({ storage }).single('image'), async (req, res, next) => {
+    .post(checkAuth, multer({ storage }).single('image'), async (req, res, next) => {
         const url = req.protocol + '://' + req.get('host');
         const post = new Post({
             title: req.body.title,
             content: req.body.content,
-            imagePath: url + '/images/' + req.file.filename
+            imagePath: url + '/images/' + req.file.filename,
+            creator: req.userData.userId
         });
         await post.save().then(result => {
             res.status(201).json({
@@ -47,9 +48,9 @@ router.route('/')
         const postQuery = Post.find();
         let fetchedPosts;
         let count;
-        if(pageSize && currentPage){
-            postQuery.skip(pageSize * (currentPage -1))
-            .limit(pageSize);
+        if (pageSize && currentPage) {
+            postQuery.skip(pageSize * (currentPage - 1))
+                .limit(pageSize);
         }
         count = await Post.count();
         fetchedPosts = await postQuery;
@@ -69,20 +70,26 @@ router.route('/:id')
                 res.status(404).json({ message: 'Post not found' });
             }
         })
-    }).delete(checkAuth,async (req, res, next) => {
+    }).delete(checkAuth, async (req, res, next) => {
         await Post.deleteOne({ _id: req.params.id });
         res.status(200).json({ message: 'deleted' });
-    }).put(checkAuth,multer({ storage }).single('image'), async (req, res, next) => {
+    })
+    .put(checkAuth, multer({ storage }).single('image'), async (req, res, next) => {
         let imagePath = req.body.imagePath;
-        if(req.file){
+        if (req.file) {
             const url = req.protocol + '://' + req.get('host');
             imagePath = url + '/images/' + req.file.filename;
         }
-
-        post = await Post.findByIdAndUpdate(req.params.id, {title: req.body.title,
+        const updatedPost = {
+            title: req.body.title,
             content: req.body.content,
-            imagePath: imagePath}, { new: true });
-        res.status(200).json({ message: 'success', post });
-    });
+            imagePath: imagePath 
+        }
+        Post.updateOne({_id: req.params.id,creator: req.userData.userId},updatedPost)
+            .then(result => {
+                res.status(200).json({ message: 'success', result });   
+            });
+        
+    });  
 
 module.exports = router;

@@ -27,21 +27,39 @@ router.route('/signup')
     });
 
 router.route('/login').post(async (req, res, next) => {
-    User.findOne({ email: req.body.email }).then(user => {
-        if (!user) {
-            return res.status(401).json({ message: 'login failed' });
-        }
-        return bcrypt.compare(req.body.password, user.password);
-    }).then(result => {
-        if (!result) {
-            return res.status(401).json({
-                message: 'login failed'
-            });
-        }
-        const token = jwt.sign({ email: user.email, userId: user._id }, 'secret_password'
-            , {expiresIn: '1h'});
-        res.status(200).json({token, expiresIn: '3600'});
-    });
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+        return res.status(401).json({ message: 'login failed' });
+    }
+    const result = await bcrypt.compare(req.body.password, user.password);
+    if (!result) {
+        return res.status(401).json({
+            message: 'login failed'
+        });
+    }
+    const token = jwt.sign({ email: user.email, userId: user._id }, 'secret_password'
+        , { expiresIn: '1h' });
+
+    res.status(200).json({ token, expiresIn: '3600' });
+    // User.findOne({ email: req.body.email }).then(user => {
+
+    //     if (!user) {
+    //         return res.status(401).json({ message: 'login failed' });
+    //     }
+    //     return bcrypt.compare(req.body.password, user.password);
+    // }).then(result => {
+
+    //     if (!result) {
+    //         return res.status(401).json({
+    //             message: 'login failed'
+    //         });
+    //     }
+
+    //     const token = jwt.sign({ email: user.email, userId: user._id }, 'secret_password'
+    //         , {expiresIn: '1h'});
+
+    //     res.status(200).json({token, expiresIn: '3600'});
+    // });
 });
 
 module.exports = router;
