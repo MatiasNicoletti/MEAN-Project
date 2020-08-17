@@ -3,6 +3,7 @@ import { Post } from '../post.model';
 import { PostsService } from '../posts.service';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-post-list',
@@ -22,11 +23,14 @@ export class PostListComponent implements OnInit, OnDestroy {
   postsPerPage = 2;
   currentPage = 1;
   pageSizeOptions = [1, 2, 5, 10];
+  isUserAuthenticated:boolean = false;
+  private authListenerSubscription: Subscription;
   //input to bind from the outside
-  constructor(private postsService: PostsService) {}
+  constructor(private postsService: PostsService, private authService: AuthService) {}
   
 
   ngOnInit(): void {
+    
     this.isLoading = true;
     this.postsService.getPosts(this.postsPerPage, this.currentPage);
     this.postsSubscription = this.postsService.getPostUpdateListener()
@@ -34,12 +38,17 @@ export class PostListComponent implements OnInit, OnDestroy {
       this.isLoading = false;
       this.totalPosts = postdata.postCount;
       this.posts = postdata.posts;
+
     });
-    
+    this.isUserAuthenticated = this.authService.getIsAuth();
+    this.authListenerSubscription = this.authService.getAuthStatusListener().subscribe(response => {
+      this.isUserAuthenticated = response;
+    });
     // subscribe() 3 posible arguments: function which is called when a new value is recived
   }
   ngOnDestroy(): void {
     this.postsSubscription.unsubscribe();
+    this.authListenerSubscription.unsubscribe();
   }
 
   onChangedPage(pageData: PageEvent){

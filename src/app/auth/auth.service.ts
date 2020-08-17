@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
     providedIn: 'root'
   })
 export class AuthService{
+    private isAuthenticated:boolean = false;
     private token:string;
     private authStatusListener = new Subject<boolean>();
     constructor(private http: HttpClient){}
@@ -24,12 +25,21 @@ export class AuthService{
         this.http.post<{token:string}>('http://localhost:3000/api/users/login', authData)
             .subscribe(response => {
                 this.token = response.token;
-                this.authStatusListener.next(true);
+                if(this.token){
+                    this.isAuthenticated = true;
+                    this.authStatusListener.next(true);
+                }
+        
+                
             })
     }
 
     getAuthStatusListener(){
         return this.authStatusListener.asObservable();
+    }
+
+    getIsAuth(){
+        return this.isAuthenticated;
     }
 
     getToken(){
