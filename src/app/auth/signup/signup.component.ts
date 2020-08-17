@@ -17,6 +17,7 @@ export class SignupComponent implements OnInit {
     if(signUp.invalid){
       return;
     }
+    this.isLoading = true;
     this.authService.createUser(signUp.value.email,signUp.value.password);
   }
 }

@@ -19,9 +19,10 @@
       <mat-form-field>
         <input type="password" name="password" ngModel #passwordInput="ngModel" matInput placeholder="Password">
         <mat-error *ngIf="passwordInput.invalid">Please enter a valid password</mat-error>
-      </mat-form-field>
-      <button mat-raised-button color="primary" type="submit">
+      </mat-form-field> 
+      <button mat-raised-button color="primary" type="submit" *ngIf="!isLoading">
         Signup
       </button>
+      <mat-spinner *ngIf="isLoading"></mat-spinner>
     </form>
   </mat-card>
