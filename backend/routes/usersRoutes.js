@@ -6,20 +6,22 @@ const bcrypt = require('bcrypt');
 const catchAsync = require('../utils/catchAsync');
 
 router.route('/signup')
-    .post(catchAsync(async (req, res, next) => {
+    .post(async (req, res, next) => {
         bcrypt.hash(req.body.password, 10).then(
             (hash) => {
                 const user = new User({
                     email: req.body.email,
                     password: hash
                 });
-                user.save().then(res.status(201).json({
+                user.save().then(result => res.status(201).json({
                     message: 'success',
-                    user
-                }))
-                
+                    result
+                })
+                ).catch(error => {
+                    res.status(500).json({ error })
+                })
             }
         );
-    })); 
+    });
 
-    module.exports = router;
+module.exports = router;
