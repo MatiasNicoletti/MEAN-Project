@@ -70,9 +70,14 @@ router.route('/:id')
                 res.status(404).json({ message: 'Post not found' });
             }
         })
-    }).delete(checkAuth, async (req, res, next) => {
-        await Post.deleteOne({ _id: req.params.id });
-        res.status(200).json({ message: 'deleted' });
+    })
+    .delete(checkAuth, async (req, res, next) => {
+        const result = await Post.deleteOne({ _id: req.params.id ,creator: req.userData.userId});
+        if(result.deleteCount > 0){
+            res.status(200).json({ message: 'deleted', result }); 
+        }else{
+            res.status(401).json({ message: 'Not Authorized', result }); 
+        }
     })
     .put(checkAuth, multer({ storage }).single('image'), async (req, res, next) => {
         let imagePath = req.body.imagePath;
@@ -87,7 +92,12 @@ router.route('/:id')
         }
         Post.updateOne({_id: req.params.id,creator: req.userData.userId},updatedPost)
             .then(result => {
-                res.status(200).json({ message: 'success', result });   
+                if(result.nModified > 0){
+                    res.status(200).json({ message: 'success', result }); 
+                }else{
+                    res.status(401).json({ message: 'Not Authorized', result }); 
+                }
+                  
             });
         
     });  
