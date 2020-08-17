@@ -41,7 +41,9 @@ export class PostListComponent implements OnInit, OnDestroy {
 
     });
     this.isUserAuthenticated = this.authService.getIsAuth();
+    console.log(this.isUserAuthenticated);
     this.authListenerSubscription = this.authService.getAuthStatusListener().subscribe(response => {
+      console.log(response);
       this.isUserAuthenticated = response;
     });
     // subscribe() 3 posible arguments: function which is called when a new value is recived
