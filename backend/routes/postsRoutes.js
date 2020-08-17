@@ -2,6 +2,8 @@ const express = require('express');
 const Post = require('../models/post');
 const router = express.Router();
 const multer = require('multer');
+const checkAuth = require('../middleware/check-auth');
+
 const MINE_TYPE_MAP = {
     'image/png': 'png',
     'image/jpeg': 'jpg',
@@ -25,7 +27,7 @@ const storage = multer.diskStorage({
 });
 
 router.route('/')
-    .post(multer({ storage }).single('image'), async (req, res, next) => {
+    .post(checkAuth,multer({ storage }).single('image'), async (req, res, next) => {
         const url = req.protocol + '://' + req.get('host');
         const post = new Post({
             title: req.body.title,
@@ -67,10 +69,10 @@ router.route('/:id')
                 res.status(404).json({ message: 'Post not found' });
             }
         })
-    }).delete(async (req, res, next) => {
+    }).delete(checkAuth,async (req, res, next) => {
         await Post.deleteOne({ _id: req.params.id });
         res.status(200).json({ message: 'deleted' });
-    }).put(multer({ storage }).single('image'), async (req, res, next) => {
+    }).put(checkAuth,multer({ storage }).single('image'), async (req, res, next) => {
         let imagePath = req.body.imagePath;
         if(req.file){
             const url = req.protocol + '://' + req.get('host');
