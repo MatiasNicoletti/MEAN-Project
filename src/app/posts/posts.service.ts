@@ -49,7 +49,8 @@ export class PostsService {
     postData.append('title', title)
     postData.append('content', content)
     postData.append('image', image, title);
-    this.http.post<{ message: string, post: Post }>('http://localhost:3000/api/posts', postData)
+    
+    this.http.post<{ message: string, post: Post }>('http://localhost:3000/api/posts/', postData)
       .subscribe((response) => {
         this.router.navigate(['/']);
       });

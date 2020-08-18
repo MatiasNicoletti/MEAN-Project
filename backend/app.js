@@ -30,7 +30,10 @@ app.use((req, res, next) => {
     
     next();
 });
-
+app.use((req,res,next)=>{
+    console.log(req); 
+    next();
+})
 app.use('/api/posts/', postRoutes);
 app.use('/api/users/', usersRoutes);
 
