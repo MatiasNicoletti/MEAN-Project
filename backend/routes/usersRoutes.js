@@ -20,7 +20,7 @@ router.route('/signup')
                     result
                 })
                 ).catch(error => {
-                    res.status(500).json({ error })
+                    res.status(500).json({ message:'Invalid authentication credentials' })
                 })
             }
         );
