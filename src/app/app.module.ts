@@ -10,21 +10,19 @@ import { HeaderComponent } from './header/header.component';
 
 import { PostsService } from './posts/posts.service';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { LoginComponent } from './auth/login/login.component';
-import { SignupComponent } from './auth/signup/signup.component';
 import { AuthService } from './auth/auth.service';
 import { AuthInterceptor } from './auth/auth-interceptor';
 import { ErrorInterceptor } from './error-interceptor';
 import { ErrorComponent } from './error/error.component';
 import { AngularMaterialModule } from './angulat-material.module';
 import { PostModule } from './posts/post.module';
+import { AuthModule } from './auth/auth.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    LoginComponent,
-    SignupComponent,
+    
     ErrorComponent
   ],
   imports: [
@@ -34,7 +32,8 @@ import { PostModule } from './posts/post.module';
     BrowserAnimationsModule,
     HttpClientModule,
     AngularMaterialModule,
-    PostModule
+    PostModule,
+    AuthModule
   ],
   providers: [PostsService, AuthService, {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     , {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}],
